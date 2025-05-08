@@ -74,4 +74,153 @@
     }
     .checkbox-left {
       display: flex;
-      align
+      align-items: center;
+    }
+    .checkbox-left input {
+      width: auto;
+      margin-right: 10px;
+    }
+    #otpSection {
+      display: none;
+    }
+  </style>
+
+  <script>
+    let otpCode = "";
+    let isOtpVerified = false;
+
+    function sendOTP() {
+      const phone = document.getElementById("phone").value.trim();
+      if (!phone) return alert("กรุณากรอกเบอร์โทร");
+
+      otpCode = Math.floor(100000 + Math.random() * 900000).toString();
+      alert("OTP ของคุณคือ: " + otpCode);
+      isOtpVerified = false;
+
+      document.getElementById("otpSection").style.display = "block";
+    }
+
+    function verifyOTP() {
+      const inputOtp = document.getElementById("otp").value.trim();
+      if (inputOtp === otpCode) {
+        alert("ยืนยัน OTP สำเร็จ");
+        isOtpVerified = true;
+        loadVendors();
+      } else {
+        alert("OTP ไม่ถูกต้อง");
+        isOtpVerified = false;
+      }
+    }
+
+    function loadVendors() {
+      if (!isOtpVerified) {
+        alert("กรุณายืนยัน OTP ก่อนโหลดรายชื่อ Vendor");
+        return;
+      }
+
+      const phone = document.getElementById("phone").value.trim();
+      fetch(`https://script.google.com/macros/s/YOUR_SCRIPT_ID/exec?phone=${phone}`)
+        .then(response => response.json())
+        .then(data => {
+          const select = document.getElementById("vendor");
+          select.innerHTML = '<option value="">-- เลือก Vendor --</option>';
+          data.vendors.forEach(v => {
+            const option = document.createElement("option");
+            option.value = v;
+            option.text = v;
+            select.appendChild(option);
+          });
+        })
+        .catch(err => {
+          alert("ไม่สามารถโหลดรายชื่อ Vendor ได้: " + err);
+        });
+    }
+
+    function showConsent() {
+      const confirmed = confirm(
+        "บริษัทฯ ขอความยินยอมในการใช้ข้อมูลของคุณ เช่น ชื่อ ที่อยู่ เอกสาร และข้อมูลอื่นๆ เพื่อประมวลผลด้วยระบบ AI (OCR และ Automation) เพื่อเพิ่มประสิทธิภาพในการให้บริการ โดยข้อมูลจะถูกเก็บรักษาตามกฎหมาย PDPA\n\nคุณยินยอมให้เราใช้ข้อมูลของคุณตามวัตถุประสงค์ดังกล่าวหรือไม่?"
+      );
+      document.getElementById("consent").checked = confirmed;
+    }
+
+    function registerUser() {
+      const name = document.getElementById("name").value.trim();
+      const lastname = document.getElementById("lastname").value.trim();
+      const email = document.getElementById("email").value.trim();
+      const phone = document.getElementById("phone").value.trim();
+      const vendor = document.getElementById("vendor").value;
+      const consentChecked = document.getElementById("consent").checked;
+
+      if (!isOtpVerified) {
+        alert("กรุณายืนยัน OTP ก่อนลงทะเบียน");
+        return;
+      }
+
+      if (!name || !lastname || !email || !phone || !vendor) {
+        alert("กรุณากรอกข้อมูลให้ครบทุกช่อง");
+        return;
+      }
+
+      if (!consentChecked) {
+        alert("กรุณายอมรับนโยบายก่อนลงทะเบียน");
+        return;
+      }
+
+      const data = { name, lastname, email, phone, vendor };
+
+      fetch("https://script.google.com/macros/s/YOUR_SCRIPT_ID/exec", {
+        method: "POST",
+        body: JSON.stringify(data),
+      })
+        .then(res => res.json())
+        .then(resp => {
+          alert("ลงทะเบียนสำเร็จ!");
+          window.close();
+        })
+        .catch(err => {
+          alert("เกิดข้อผิดพลาด: " + err);
+        });
+    }
+  </script>
+</head>
+<body>
+  <div class="container">
+    <h2>แบบฟอร์มลงทะเบียน</h2>
+
+    <label>ชื่อ</label>
+    <input type="text" id="name" placeholder="กรอกชื่อ">
+
+    <label>นามสกุล</label>
+    <input type="text" id="lastname" placeholder="กรอกนามสกุล">
+
+    <label>Email</label>
+    <input type="email" id="email" placeholder="กรอกอีเมล">
+
+    <label>เบอร์โทรศัพท์</label>
+    <input type="text" id="phone" placeholder="กรอกเบอร์โทรศัพท์">
+
+    <button class="btn-secondary" onclick="sendOTP()">Send OTP</button>
+
+    <div id="otpSection">
+      <label>OTP</label>
+      <input type="text" id="otp" placeholder="กรอก OTP">
+      <button class="btn-secondary" style="margin-top: 10px;" onclick="verifyOTP()">Verify OTP</button>
+    </div>
+
+    <label>Vendor</label>
+    <select id="vendor">
+      <option value="">-- เลือก Vendor --</option>
+    </select>
+
+    <div class="checkbox-row">
+      <div class="checkbox-left">
+        <input type="checkbox" id="consent">
+        <label for="consent">ฉันยินยอมตามนโยบาย</label>
+      </div>
+      <button class="btn-secondary" onclick="showConsent()">อ่านนโยบาย</button>
+    </div>
+
+    <button onclick="registerUser()">ลงทะเบียน</button>
+  </div>
+</body>
+</html>
