@@ -1,93 +1,226 @@
-<script>
-  let otpCode = "";
-  let isOtpVerified = false;
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <title>Register Page</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    * { box-sizing: border-box; }
+    body, html {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+      width: 100%;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #e0eafc, #cfdef3);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+    .container {
+      background-color: #fff;
+      width: 90%;
+      max-width: 600px;
+      padding: 40px 30px;
+      border-radius: 16px;
+      box-shadow: 0 8px 30px rgba(0, 0, 0, 0.1);
+    }
+    h2 {
+      text-align: center;
+      margin-bottom: 30px;
+      color: #333;
+    }
+    label {
+      display: block;
+      font-weight: 600;
+      margin-bottom: 6px;
+    }
+    input, select {
+      width: 100%;
+      padding: 12px;
+      margin-bottom: 20px;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+      font-size: 15px;
+    }
+    .button-group {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      margin-bottom: 20px;
+    }
+    button {
+      flex: 1;
+      padding: 12px;
+      border: none;
+      border-radius: 8px;
+      background-color: #4CAF50;
+      color: white;
+      font-size: 15px;
+      cursor: pointer;
+      transition: background 0.3s ease;
+    }
+    button:hover {
+      background-color: #45a049;
+    }
+    .btn-secondary {
+      background-color: #007BFF;
+    }
+    .btn-secondary:hover {
+      background-color: #0056b3;
+    }
+    .checkbox-container {
+      display: flex;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+    .checkbox-container input {
+      width: auto;
+      margin-right: 10px;
+    }
+    @media (max-width: 600px) {
+      .button-group {
+        flex-direction: column;
+      }
+      button {
+        width: 100%;
+      }
+    }
+  </style>
 
-  function sendOTP() {
-    const phone = document.getElementById("phone").value.trim();
-    if (!phone) return alert("กรุณากรอกเบอร์โทร");
+  <script>
+    let otpCode = "";
+    let isOtpVerified = false;
 
-    otpCode = Math.floor(100000 + Math.random() * 900000).toString(); // mock OTP
-    alert("OTP ของคุณคือ: " + otpCode);
-    isOtpVerified = false; // reset เมื่อส่ง OTP ใหม่
-  }
+    function sendOTP() {
+      const phone = document.getElementById("phone").value.trim();
+      if (!phone) return alert("กรุณากรอกเบอร์โทร");
 
-  function verifyOTP() {
-    const inputOtp = document.getElementById("otp").value.trim();
-    if (inputOtp === otpCode) {
-      alert("ยืนยัน OTP สำเร็จ");
-      isOtpVerified = true;
-      loadVendors(); // โหลด vendor หลัง OTP ถูกต้อง
-    } else {
-      alert("OTP ไม่ถูกต้อง");
+      otpCode = Math.floor(100000 + Math.random() * 900000).toString();
+      alert("OTP ของคุณคือ: " + otpCode);
       isOtpVerified = false;
     }
-  }
 
-  function loadVendors() {
-    if (!isOtpVerified) {
-      alert("กรุณายืนยัน OTP ก่อน");
-      return;
+    function verifyOTP() {
+      const inputOtp = document.getElementById("otp").value.trim();
+      if (inputOtp === otpCode) {
+        alert("ยืนยัน OTP สำเร็จ");
+        isOtpVerified = true;
+        loadVendors();
+      } else {
+        alert("OTP ไม่ถูกต้อง");
+        isOtpVerified = false;
+      }
     }
 
-    const phone = document.getElementById("phone").value.trim();
-    fetch(`https://script.google.com/macros/s/YOUR_SCRIPT_ID/exec?phone=${phone}`)
-      .then(response => response.json())
-      .then(data => {
-        const select = document.getElementById("vendor");
-        select.innerHTML = '<option value="">-- เลือก Vendor --</option>';
-        data.vendors.forEach(v => {
-          const option = document.createElement("option");
-          option.value = v;
-          option.text = v;
-          select.appendChild(option);
+    function loadVendors() {
+      if (!isOtpVerified) {
+        alert("กรุณายืนยัน OTP ก่อนโหลดรายชื่อ Vendor");
+        return;
+      }
+
+      const phone = document.getElementById("phone").value.trim();
+      fetch(`https://script.google.com/macros/s/YOUR_SCRIPT_ID/exec?phone=${phone}`)
+        .then(response => response.json())
+        .then(data => {
+          const select = document.getElementById("vendor");
+          select.innerHTML = '<option value="">-- เลือก Vendor --</option>';
+          data.vendors.forEach(v => {
+            const option = document.createElement("option");
+            option.value = v;
+            option.text = v;
+            select.appendChild(option);
+          });
+        })
+        .catch(err => {
+          alert("ไม่สามารถโหลดรายชื่อ Vendor ได้: " + err);
         });
+    }
+
+    function showConsent() {
+      const confirmed = confirm(
+        "บริษัทฯ ขอความยินยอมในการใช้ข้อมูลของคุณ เช่น ชื่อ ที่อยู่ เอกสาร และข้อมูลอื่นๆ เพื่อประมวลผลด้วยระบบ AI (OCR และ Automation) เพื่อเพิ่มประสิทธิภาพในการให้บริการ โดยข้อมูลจะถูกเก็บรักษาตามกฎหมาย PDPA\n\nคุณยินยอมให้เราใช้ข้อมูลของคุณตามวัตถุประสงค์ดังกล่าวหรือไม่?"
+      );
+      document.getElementById("consent").checked = confirmed;
+    }
+
+    function registerUser() {
+      const name = document.getElementById("name").value.trim();
+      const lastname = document.getElementById("lastname").value.trim();
+      const email = document.getElementById("email").value.trim();
+      const phone = document.getElementById("phone").value.trim();
+      const vendor = document.getElementById("vendor").value;
+      const consentChecked = document.getElementById("consent").checked;
+
+      if (!isOtpVerified) {
+        alert("กรุณายืนยัน OTP ก่อนลงทะเบียน");
+        return;
+      }
+
+      if (!name || !lastname || !email || !phone || !vendor) {
+        alert("กรุณากรอกข้อมูลให้ครบทุกช่อง");
+        return;
+      }
+
+      if (!consentChecked) {
+        alert("กรุณายอมรับนโยบายก่อนลงทะเบียน");
+        return;
+      }
+
+      const data = { name, lastname, email, phone, vendor };
+
+      fetch("https://script.google.com/macros/s/YOUR_SCRIPT_ID/exec", {
+        method: "POST",
+        body: JSON.stringify(data),
       })
-      .catch(err => {
-        alert("ไม่สามารถโหลดรายชื่อ Vendor ได้: " + err);
-      });
-  }
-
-  function showConsent() {
-    const confirmed = confirm("คุณยินยอมให้เราใช้ข้อมูลของคุณหรือไม่?");
-    document.getElementById("consent").checked = confirmed;
-  }
-
-  function registerUser() {
-    const username = document.getElementById("username").value.trim();
-    const password = document.getElementById("password").value.trim();
-    const email = document.getElementById("email").value.trim();
-    const phone = document.getElementById("phone").value.trim();
-    const vendor = document.getElementById("vendor").value;
-    const consentChecked = document.getElementById("consent").checked;
-
-    if (!isOtpVerified) {
-      alert("กรุณายืนยัน OTP ก่อนลงทะเบียน");
-      return;
+        .then(res => res.json())
+        .then(resp => {
+          alert("ลงทะเบียนสำเร็จ!");
+          window.close();
+        })
+        .catch(err => {
+          alert("เกิดข้อผิดพลาด: " + err);
+        });
     }
+  </script>
+</head>
+<body>
+  <div class="container">
+    <h2>แบบฟอร์มลงทะเบียน</h2>
 
-    if (!username || !password || !email || !phone || !vendor) {
-      alert("กรุณากรอกข้อมูลให้ครบทุกช่อง");
-      return;
-    }
+    <label>ชื่อ</label>
+    <input type="text" id="name" placeholder="กรอกชื่อ">
 
-    if (!consentChecked) {
-      alert("กรุณายอมรับนโยบายก่อนลงทะเบียน");
-      return;
-    }
+    <label>นามสกุล</label>
+    <input type="text" id="lastname" placeholder="กรอกนามสกุล">
 
-    const data = { username, password, email, phone, vendor };
+    <label>Email</label>
+    <input type="email" id="email" placeholder="กรอกอีเมล">
 
-    fetch("https://script.google.com/macros/s/YOUR_SCRIPT_ID/exec", {
-      method: "POST",
-      body: JSON.stringify(data),
-    })
-      .then(res => res.json())
-      .then(resp => {
-        alert("ลงทะเบียนสำเร็จ!");
-        window.close();
-      })
-      .catch(err => {
-        alert("เกิดข้อผิดพลาด: " + err);
-      });
-  }
-</script>
+    <label>เบอร์โทรศัพท์</label>
+    <input type="text" id="phone" placeholder="กรอกเบอร์โทรศัพท์">
+
+    <div class="button-group">
+      <button class="btn-secondary" onclick="sendOTP()">Send OTP</button>
+      <button class="btn-secondary" onclick="verifyOTP()">Verify OTP</button>
+    </div>
+
+    <label>OTP</label>
+    <input type="text" id="otp" placeholder="กรอก OTP">
+
+    <label>Vendor</label>
+    <select id="vendor">
+      <option value="">-- เลือก Vendor --</option>
+    </select>
+
+    <div class="checkbox-container">
+      <input type="checkbox" id="consent">
+      <label for="consent">ฉันยินยอมให้นำข้อมูลไปใช้ตามนโยบาย</label>
+    </div>
+
+    <button class="btn-secondary" onclick="showConsent()">อ่าน Consent</button>
+    <button onclick="registerUser()">ลงทะเบียน</button>
+  </div>
+</body>
+</html>
