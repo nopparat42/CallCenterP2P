@@ -4,16 +4,42 @@
   <meta charset="UTF-8">
   <title>Register Page</title>
   <style>
+    * {
+      box-sizing: border-box;
+    }
+
     body {
-      font-family: Arial, sans-serif;
       margin: 0;
-      padding: 30px;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #f5f7fa;
+      color: #333;
     }
 
     .container {
-      max-width: 500px;
+      max-width: 100%;
+      width: 100%;
+      padding: 40px;
+    }
+
+    .form-box {
+      max-width: 600px;
+      background: #fff;
       margin: 0 auto;
-      text-align: left;
+      padding: 30px 40px;
+      border-radius: 10px;
+      box-shadow: 0 8px 16px rgba(0, 0, 0, 0.08);
+    }
+
+    h2 {
+      text-align: center;
+      color: #005b9f;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 6px;
+      font-weight: 600;
+      color: #333;
     }
 
     input[type="text"],
@@ -21,22 +47,25 @@
     input[type="email"],
     select {
       width: 100%;
-      padding: 10px;
-      margin-top: 5px;
-      margin-bottom: 15px;
-      box-sizing: border-box;
+      padding: 12px;
+      margin-bottom: 18px;
       border-radius: 6px;
       border: 1px solid #ccc;
+      font-size: 16px;
     }
 
     button {
-      padding: 10px 20px;
-      margin-top: 10px;
-      border: none;
-      background-color: #4CAF50;
+      background-color: #005b9f;
       color: white;
+      border: none;
+      padding: 12px 20px;
+      font-size: 16px;
+      border-radius: 6px;
       cursor: pointer;
-      border-radius: 4px;
+    }
+
+    button:hover {
+      background-color: #004480;
     }
 
     .otp-section {
@@ -54,12 +83,12 @@
       display: flex;
       align-items: center;
       gap: 8px;
-      margin-bottom: 20px;
+      margin-bottom: 25px;
       justify-content: flex-start;
     }
 
     .policy-link {
-      color: blue;
+      color: #007bff;
       text-decoration: underline;
       cursor: pointer;
     }
@@ -67,45 +96,55 @@
     .policy-link:visited {
       color: purple;
     }
+
+    @media (max-width: 600px) {
+      .form-box {
+        padding: 20px;
+      }
+    }
   </style>
 </head>
 <body>
   <div class="container">
-    <h2>Register Form</h2>
+    <div class="form-box">
+      <h2>Register Form</h2>
 
-    <label>ชื่อ (Name):</label>
-    <input type="text" id="name">
+      <label>ชื่อ (Name):</label>
+      <input type="text" id="name">
 
-    <label>นามสกุล (Lastname):</label>
-    <input type="text" id="lastname">
+      <label>นามสกุล (Lastname):</label>
+      <input type="text" id="lastname">
 
-    <label>อีเมล:</label>
-    <input type="email" id="email">
+      <label>อีเมล:</label>
+      <input type="email" id="email">
 
-    <label>เบอร์โทร:</label>
-    <input type="text" id="phone">
-    <button onclick="sendOTP()">Send OTP</button>
-    <span id="otp-status"></span>
+      <label>เบอร์โทร:</label>
+      <input type="text" id="phone">
+      <div style="display: flex; align-items: center;">
+        <button onclick="sendOTP()">Send OTP</button>
+        <span id="otp-status"></span>
+      </div>
 
-    <div class="otp-section" id="otp-section">
-      <label>OTP:</label>
-      <input type="text" id="otp">
-      <button onclick="verifyOTP()">Verify OTP</button>
+      <div class="otp-section" id="otp-section">
+        <label>OTP:</label>
+        <input type="text" id="otp">
+        <button onclick="verifyOTP()">Verify OTP</button>
+      </div>
+
+      <div style="margin-top: 25px;">
+        <label>Vendor:</label>
+        <select id="vendor">
+          <option value="">-- เลือก Vendor --</option>
+        </select>
+      </div>
+
+      <div class="checkbox-row">
+        <input type="checkbox" id="consent">
+        <label for="consent">ฉันยินยอมตาม <a class="policy-link" onclick="showConsent()">นโยบาย</a></label>
+      </div>
+
+      <button onclick="registerUser()">Register</button>
     </div>
-
-    <div style="margin-top: 20px;">
-      <label>Vendor:</label>
-      <select id="vendor">
-        <option value="">-- เลือก Vendor --</option>
-      </select>
-    </div>
-
-    <div class="checkbox-row">
-      <input type="checkbox" id="consent">
-      <label for="consent">ฉันยินยอมตาม <a class="policy-link" onclick="showConsent()">นโยบาย</a></label>
-    </div>
-
-    <button onclick="registerUser()">Register</button>
   </div>
 
   <script>
@@ -116,8 +155,8 @@
       const phone = document.getElementById("phone").value;
       if (!phone) return alert("กรุณากรอกเบอร์โทร");
 
-      otpCode = Math.floor(100000 + Math.random() * 900000).toString(); // mock OTP
-      alert("OTP ของคุณคือ: " + otpCode); // simulate SMS
+      otpCode = Math.floor(100000 + Math.random() * 900000).toString();
+      alert("OTP ของคุณคือ: " + otpCode);
       document.getElementById("otp-section").style.display = "block";
       document.getElementById("otp-status").innerHTML = "";
       otpVerified = false;
@@ -138,7 +177,6 @@
 
     function loadVendors() {
       const phone = document.getElementById("phone").value;
-
       fetch(`https://script.google.com/macros/s/YOUR_SCRIPT_ID/exec?phone=${phone}`)
         .then(response => response.json())
         .then(data => {
