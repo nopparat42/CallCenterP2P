@@ -1,53 +1,103 @@
 <!DOCTYPE html>
-<html lang="en">
-
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Regis system</title>
-    <style>
-        html,
-        body {
-            margin: 0;
-            width: 100%;
-            height: 100%;
-        }
+  <title>Register Page</title>
+  <script>
+    let otpCode = "";
 
-        iframe {
-            width: 100%;
-            height: 100%;
-        }
-    </style>
-</head>
+    function sendOTP() {
+      const phone = document.getElementById("phone").value;
+      if (!phone) return alert("กรุณากรอกเบอร์โทร");
 
-<body>
-    <!-- <iframe id="formframe" src="" frameborder="0"></iframe> -->
-    <h2 id="status">กำลังเริ่มต้น LIFF...</h2>
-</body>
-<script src="https://static.line-scdn.net/liff/edge/versions/2.15.0/sdk.js"></script>
-<script>
-    
-    function runApp() {
-        liff.getProfile().then(profile => {
-            document.getElementById('status').textContent = profile.userId;
-            // let userId = profile.userId;
-            // let displayName = profile.displayName;
-            // let pictureUrl = profile.pictureUrl;
-            // let url = "<< URL >>?userId=" + userId + "&displayName=" + displayName + "&pictureUrl=" + pictureUrl;
-            // document.getElementById("formframe").src = url;
-        }).catch(err => console.error(err));
+      otpCode = Math.floor(100000 + Math.random() * 900000).toString(); // mock OTP
+      alert("OTP ของคุณคือ: " + otpCode); // ในระบบจริงจะต้องส่งผ่าน SMS
     }
 
-    liff.init({ liffId: "2007370960-O9YG0WGY" }, () => {
-        if (liff.isLoggedIn()) {
-            document.getElementById('status').textContent = '⏳ กำลังโหลด LIFF...';
-            runApp();
-        } else {
-            liff.login();
-        }
-    }, err => console.error(err.code, error.message));
+    function verifyOTP() {
+      const inputOtp = document.getElementById("otp").value;
+      if (inputOtp === otpCode) {
+        alert("ยืนยัน OTP สำเร็จ");
+        loadVendors();
+      } else {
+        alert("OTP ไม่ถูกต้อง");
+      }
+    }
 
-</script>
+    function loadVendors() {
+      const phone = document.getElementById("phone").value;
+      fetch(`https://script.google.com/macros/s/YOUR_SCRIPT_ID/exec?phone=${phone}`)
+        .then(response => response.json())
+        .then(data => {
+          const select = document.getElementById("vendor");
+          select.innerHTML = "";
+          data.vendors.forEach(v => {
+            const option = document.createElement("option");
+            option.value = v;
+            option.text = v;
+            select.appendChild(option);
+          });
+        });
+    }
 
+    function showConsent() {
+      const confirmed = confirm("คุณยินยอมให้เราใช้ข้อมูลของคุณหรือไม่?");
+      document.getElementById("consent").checked = confirmed;
+    }
+
+    function registerUser() {
+      if (!document.getElementById("consent").checked) {
+        alert("กรุณายอมรับการให้ใช้ข้อมูลก่อน");
+        return;
+      }
+
+      const data = {
+        username: document.getElementById("username").value,
+        password: document.getElementById("password").value,
+        email: document.getElementById("email").value,
+        phone: document.getElementById("phone").value,
+        vendor: document.getElementById("vendor").value,
+      };
+
+      fetch("https://script.google.com/macros/s/YOUR_SCRIPT_ID/exec", {
+        method: "POST",
+        body: JSON.stringify(data),
+      })
+        .then(res => res.json())
+        .then(resp => {
+          alert("ลงทะเบียนสำเร็จ!");
+          window.close();
+        })
+        .catch(err => {
+          alert("เกิดข้อผิดพลาด: " + err);
+        });
+    }
+  </script>
+</head>
+<body>
+  <h2>Register Form</h2>
+  <label>Username:</label><br>
+  <input type="text" id="username"><br><br>
+
+  <label>Password:</label><br>
+  <input type="password" id="password"><br><br>
+
+  <label>Email:</label><br>
+  <input type="email" id="email"><br><br>
+
+  <label>Phone:</label><br>
+  <input type="text" id="phone">
+  <button onclick="sendOTP()">Send OTP</button><br><br>
+
+  <label>OTP:</label><br>
+  <input type="text" id="otp">
+  <button onclick="verifyOTP()">Verify OTP</button><br><br>
+
+  <label>Vendor:</label><br>
+  <select id="vendor"></select><br><br>
+
+  <input type="checkbox" id="consent"> ยอมรับนโยบาย<br>
+  <button onclick="showConsent()">อ่าน Consent</button><br><br>
+
+  <button onclick="registerUser()">Register</button>
+</body>
 </html>
