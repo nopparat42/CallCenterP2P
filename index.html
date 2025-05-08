@@ -16,18 +16,23 @@
     }
 
     .container {
-      max-width: 100%;
-      width: 100%;
-      padding: 40px;
+  padding: 20px;
     }
-
+    
     .form-box {
+      width: 100%;
       max-width: 600px;
       background: #fff;
-      margin: 0 auto;
+      margin: auto;
       padding: 30px 40px;
       border-radius: 10px;
       box-shadow: 0 8px 16px rgba(0, 0, 0, 0.08);
+    }
+    
+    @media (max-width: 768px) {
+      .form-box {
+        padding: 20px;
+      }
     }
 
     h2 {
@@ -195,7 +200,13 @@
       const confirmed = confirm(
         "บริษัทฯ ขอความยินยอมในการใช้ข้อมูลของคุณ เช่น ชื่อ ที่อยู่ เอกสาร และข้อมูลอื่นๆ เพื่อประมวลผลด้วยระบบ AI (OCR และ Automation) เพื่อเพิ่มประสิทธิภาพในการให้บริการ โดยข้อมูลจะถูกเก็บรักษาตามกฎหมาย PDPA\n\nคุณยินยอมให้เราใช้ข้อมูลของคุณตามวัตถุประสงค์ดังกล่าวหรือไม่?"
       );
-      document.getElementById("consent").checked = confirmed;
+    
+      // แก้ไขให้ checkbox มีสถานะตามการกดตอบ
+      if (confirmed) {
+        document.getElementById("consent").checked = true;
+      } else {
+        document.getElementById("consent").checked = false;
+      }
     }
 
     function registerUser() {
