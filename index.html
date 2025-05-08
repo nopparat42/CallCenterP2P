@@ -16,14 +16,15 @@
     }
 
     .container {
+      width: 100%;
       padding: 20px;
     }
-    
+
     .form-box {
       width: 100%;
       max-width: 600px;
       background: #fff;
-      margin: auto;
+      margin: 0 auto;
       padding: 30px 40px;
       border-radius: 10px;
       box-shadow: 0 8px 16px rgba(0, 0, 0, 0.08);
@@ -84,6 +85,7 @@
       gap: 8px;
       margin-bottom: 25px;
       justify-content: flex-start;
+      flex-wrap: wrap;
     }
 
     .policy-link {
@@ -95,13 +97,12 @@
     .policy-link:visited {
       color: purple;
     }
-    
+
     @media (max-width: 768px) {
       .form-box {
         padding: 20px;
       }
     }
-
   </style>
 </head>
 <body>
@@ -153,7 +154,9 @@
 
     function sendOTP() {
       const phone = document.getElementById("phone").value;
-      if (!phone) return alert("กรุณากรอกเบอร์โทร");
+      if (!validatePhone(phone)) {
+        return alert("กรุณากรอกเบอร์โทรให้ถูกต้อง (ตัวเลข 9-10 หลัก)");
+      }
 
       otpCode = Math.floor(100000 + Math.random() * 900000).toString();
       alert("OTP ของคุณคือ: " + otpCode);
@@ -195,25 +198,27 @@
       const confirmed = confirm(
         "บริษัทฯ ขอความยินยอมในการใช้ข้อมูลของคุณ เช่น ชื่อ ที่อยู่ เอกสาร และข้อมูลอื่นๆ เพื่อประมวลผลด้วยระบบ AI (OCR และ Automation) เพื่อเพิ่มประสิทธิภาพในการให้บริการ โดยข้อมูลจะถูกเก็บรักษาตามกฎหมาย PDPA\n\nคุณยินยอมให้เราใช้ข้อมูลของคุณตามวัตถุประสงค์ดังกล่าวหรือไม่?"
       );
-    
-      // แก้ไขให้ checkbox มีสถานะตามการกดตอบ
-      if (confirmed) {
-        document.getElementById("consent").checked = true;
-      } else {
-        document.getElementById("consent").checked = false;
-      }
+      document.getElementById("consent").checked = confirmed;
     }
 
     function registerUser() {
-      const name = document.getElementById("name").value;
-      const lastname = document.getElementById("lastname").value;
-      const email = document.getElementById("email").value;
-      const phone = document.getElementById("phone").value;
+      const name = document.getElementById("name").value.trim();
+      const lastname = document.getElementById("lastname").value.trim();
+      const email = document.getElementById("email").value.trim();
+      const phone = document.getElementById("phone").value.trim();
       const vendor = document.getElementById("vendor").value;
       const consent = document.getElementById("consent").checked;
 
       if (!name || !lastname || !email || !phone || !vendor) {
         return alert("กรุณากรอกข้อมูลให้ครบทุกช่อง");
+      }
+
+      if (!validateEmail(email)) {
+        return alert("รูปแบบอีเมลไม่ถูกต้อง");
+      }
+
+      if (!validatePhone(phone)) {
+        return alert("กรุณากรอกเบอร์โทรให้ถูกต้อง (ตัวเลข 9-10 หลัก)");
       }
 
       if (!otpVerified) {
@@ -238,6 +243,16 @@
         .catch(err => {
           alert("เกิดข้อผิดพลาด: " + err);
         });
+    }
+
+    function validateEmail(email) {
+      const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      return re.test(email);
+    }
+
+    function validatePhone(phone) {
+      const re = /^[0-9]{9,10}$/;
+      return re.test(phone);
     }
   </script>
 </body>
