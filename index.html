@@ -1,7 +1,85 @@
 <!DOCTYPE html>
-<html>
+<html lang="th">
 <head>
+  <meta charset="UTF-8">
   <title>Register Page</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: #f0f2f5;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+    }
+
+    .container {
+      background: white;
+      padding: 30px 40px;
+      border-radius: 12px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+      width: 100%;
+      max-width: 400px;
+    }
+
+    h2 {
+      text-align: center;
+      margin-bottom: 25px;
+      color: #333;
+    }
+
+    label {
+      font-weight: 500;
+      margin-top: 10px;
+      display: block;
+    }
+
+    input, select, button {
+      width: 100%;
+      padding: 10px;
+      margin-top: 6px;
+      margin-bottom: 15px;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+      font-size: 14px;
+    }
+
+    button {
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+
+    button:hover {
+      background-color: #45a049;
+    }
+
+    .checkbox-container {
+      display: flex;
+      align-items: center;
+      margin-top: -10px;
+    }
+
+    .checkbox-container input {
+      width: auto;
+      margin-right: 8px;
+    }
+
+    .btn-small {
+      width: auto;
+      margin-top: -10px;
+      margin-bottom: 15px;
+      padding: 6px 12px;
+      background-color: #007BFF;
+    }
+
+    .btn-small:hover {
+      background-color: #0056b3;
+    }
+  </style>
   <script>
     let otpCode = "";
 
@@ -10,7 +88,7 @@
       if (!phone) return alert("กรุณากรอกเบอร์โทร");
 
       otpCode = Math.floor(100000 + Math.random() * 900000).toString(); // mock OTP
-      alert("OTP ของคุณคือ: " + otpCode); // ในระบบจริงจะต้องส่งผ่าน SMS
+      alert("OTP ของคุณคือ: " + otpCode);
     }
 
     function verifyOTP() {
@@ -40,7 +118,7 @@
     }
 
     function showConsent() {
-      const confirmed = confirm("คุณยินยอมให้เราใช้ข้อมูลของคุณหรือไม่?");
+      const confirmed = confirm("บริษัทฯ ขอความยินยอมในการใช้ข้อมูลของคุณ เช่น ชื่อ ที่อยู่ เอกสาร และข้อมูลอื่นๆ เพื่อประมวลผลด้วยระบบ AI (OCR และ Automation) เพื่อเพิ่มประสิทธิภาพในการให้บริการ โดยข้อมูลจะถูกเก็บรักษาตามกฎหมาย PDPA\n\nคุณยินยอมให้เราใช้ข้อมูลของคุณตามวัตถุประสงค์ดังกล่าวหรือไม่?");
       document.getElementById("consent").checked = confirmed;
     }
 
@@ -74,30 +152,38 @@
   </script>
 </head>
 <body>
-  <h2>Register Form</h2>
-  <label>Username:</label><br>
-  <input type="text" id="username"><br><br>
+  <div class="container">
+    <h2>Register Form</h2>
 
-  <label>Password:</label><br>
-  <input type="password" id="password"><br><br>
+    <label>Name:</label>
+    <input type="text" id="name" placeholder="กรอกชื่อผู้ใช้">
 
-  <label>Email:</label><br>
-  <input type="email" id="email"><br><br>
+    <label>Lastname:</label>
+    <input type="password" id="lastname" placeholder="กรอกนามสกุลผู้ใช้">
 
-  <label>Phone:</label><br>
-  <input type="text" id="phone">
-  <button onclick="sendOTP()">Send OTP</button><br><br>
+    <label>Email:</label>
+    <input type="email" id="email" placeholder="กรอกอีเมล">
 
-  <label>OTP:</label><br>
-  <input type="text" id="otp">
-  <button onclick="verifyOTP()">Verify OTP</button><br><br>
+    <label>Phone:</label>
+    <input type="text" id="phone" placeholder="กรอกเบอร์โทรศัพท์">
+    <button class="btn-small" onclick="sendOTP()">Send OTP</button>
 
-  <label>Vendor:</label><br>
-  <select id="vendor"></select><br><br>
+    <label>OTP:</label>
+    <input type="text" id="otp" placeholder="กรอก OTP">
+    <button class="btn-small" onclick="verifyOTP()">Verify OTP</button>
 
-  <input type="checkbox" id="consent"> ยอมรับนโยบาย<br>
-  <button onclick="showConsent()">อ่าน Consent</button><br><br>
+    <label>Vendor:</label>
+    <select id="vendor">
+      <option value="">-- เลือก Vendor --</option>
+    </select>
 
-  <button onclick="registerUser()">Register</button>
+    <div class="checkbox-container">
+      <input type="checkbox" id="consent">
+      <label for="consent">ยอมรับนโยบาย</label>
+    </div>
+    <button class="btn-small" onclick="showConsent()">อ่าน Consent</button>
+
+    <button onclick="registerUser()">Register</button>
+  </div>
 </body>
 </html>
