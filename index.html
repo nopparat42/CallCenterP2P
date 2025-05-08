@@ -10,7 +10,6 @@
       margin: 0;
       padding: 0;
       width: 100%;
-      height: 100%;
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
       background: linear-gradient(135deg, #e0eafc, #cfdef3);
     }
@@ -59,26 +58,25 @@
     .btn-secondary:hover {
       background-color: #0056b3;
     }
-    .checkbox-row {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      margin-bottom: 20px;
-    }
-    .checkbox-left {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
     #otpSection {
       display: none;
-      margin-top: 20px; /* ระยะห่างระหว่างปุ่มกับช่อง OTP */
+      margin-top: 20px;
     }
     #otpSuccess {
       display: none;
       font-weight: bold;
       color: green;
       margin-left: 10px;
+    }
+    .checkbox-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 20px;
+    }
+    .checkbox-row label {
+      display: inline;
+      font-weight: normal;
     }
     a.policy-link {
       color: blue;
@@ -88,8 +86,33 @@
     a.policy-link:visited {
       color: purple;
     }
+    #vendor {
+      margin-top: 10px;
+    }
+    /* Modal styles */
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 1000;
+      left: 0; top: 0;
+      width: 100%; height: 100%;
+      background-color: rgba(0, 0, 0, 0.4);
+    }
+    .modal-content {
+      background-color: white;
+      margin: 10% auto;
+      padding: 20px;
+      border-radius: 8px;
+      width: 80%;
+      max-width: 500px;
+    }
+    .modal-footer {
+      margin-top: 20px;
+      display: flex;
+      justify-content: flex-end;
+      gap: 10px;
+    }
   </style>
-
   <script>
     let otpCode = "";
     let isOtpVerified = false;
@@ -145,10 +168,13 @@
     }
 
     function showConsent() {
-      const confirmed = confirm(
-        "บริษัทฯ ขอความยินยอมในการใช้ข้อมูลของคุณ เช่น ชื่อ ที่อยู่ เอกสาร และข้อมูลอื่นๆ เพื่อประมวลผลด้วยระบบ AI (OCR และ Automation) เพื่อเพิ่มประสิทธิภาพในการให้บริการ โดยข้อมูลจะถูกเก็บรักษาตามกฎหมาย PDPA\n\nคุณยินยอมให้เราใช้ข้อมูลของคุณตามวัตถุประสงค์ดังกล่าวหรือไม่?"
-      );
-      document.getElementById("consent").checked = confirmed;
+      const modal = document.getElementById("consentModal");
+      modal.style.display = "block";
+    }
+
+    function closeModal(accepted) {
+      document.getElementById("consentModal").style.display = "none";
+      document.getElementById("consent").checked = accepted;
     }
 
     function registerUser() {
@@ -218,19 +244,34 @@
       <button class="btn-secondary" style="margin-top: 10px;" onclick="verifyOTP()">Verify OTP</button>
     </div>
 
-    <label>Vendor</label>
+    <label style="margin-top: 30px;">Vendor</label>
     <select id="vendor">
       <option value="">-- เลือก Vendor --</option>
     </select>
 
     <div class="checkbox-row">
-      <div class="checkbox-left">
-        <input type="checkbox" id="consent">
-        <label for="consent">ฉันยินยอมตาม <a class="policy-link" onclick="showConsent()">นโยบาย</a></label>
-      </div>
+      <input type="checkbox" id="consent">
+      <label for="consent">ฉันยินยอมตาม <a class="policy-link" onclick="showConsent()">นโยบาย</a></label>
     </div>
 
     <button onclick="registerUser()">ลงทะเบียน</button>
+  </div>
+
+  <!-- Modal for consent -->
+  <div id="consentModal" class="modal">
+    <div class="modal-content">
+      <p>
+        บริษัทฯ ขอความยินยอมในการใช้ข้อมูลของคุณ เช่น ชื่อ ที่อยู่ เอกสาร และข้อมูลอื่นๆ 
+        เพื่อประมวลผลด้วยระบบ AI (OCR และ Automation) เพื่อเพิ่มประสิทธิภาพในการให้บริการ 
+        โดยข้อมูลจะถูกเก็บรักษาตามกฎหมาย PDPA
+        <br><br>
+        คุณยินยอมให้เราใช้ข้อมูลของคุณตามวัตถุประสงค์ดังกล่าวหรือไม่?
+      </p>
+      <div class="modal-footer">
+        <button class="btn-secondary" onclick="closeModal(false)">ยกเลิก</button>
+        <button class="btn-secondary" onclick="closeModal(true)">ตกลง</button>
+      </div>
+    </div>
   </div>
 </body>
 </html>
