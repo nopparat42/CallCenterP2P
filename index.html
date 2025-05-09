@@ -3,23 +3,19 @@
 <head>
   <meta charset="UTF-8">
   <title>Register Page</title>
+  <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
   <style>
-    * {
-      box-sizing: border-box;
-    }
-
+    * { box-sizing: border-box; }
     body {
       margin: 0;
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
       background-color: #f5f7fa;
       color: #333;
     }
-
     .container {
       width: 100%;
       padding: 20px;
     }
-
     .form-box {
       width: 100%;
       max-width: 600px;
@@ -29,19 +25,13 @@
       border-radius: 10px;
       box-shadow: 0 8px 16px rgba(0, 0, 0, 0.08);
     }
-
-    h2 {
-      text-align: center;
-      color: #005b9f;
-    }
-
+    h2 { text-align: center; color: #005b9f; }
     label {
       display: block;
       margin-bottom: 6px;
       font-weight: 600;
       color: #333;
     }
-
     input[type="text"],
     input[type="password"],
     input[type="email"],
@@ -53,7 +43,6 @@
       border: 1px solid #ccc;
       font-size: 16px;
     }
-
     button {
       background-color: #005b9f;
       color: white;
@@ -63,22 +52,16 @@
       border-radius: 6px;
       cursor: pointer;
     }
-
-    button:hover {
-      background-color: #004480;
-    }
-
+    button:hover { background-color: #004480; }
     .otp-section {
       display: none;
       margin-top: 10px;
     }
-
     .otp-verified {
       font-weight: bold;
       color: green;
       margin-left: 10px;
     }
-
     .checkbox-row {
       display: flex;
       align-items: center;
@@ -87,21 +70,14 @@
       justify-content: flex-start;
       flex-wrap: wrap;
     }
-
     .policy-link {
       color: #007bff;
       text-decoration: underline;
       cursor: pointer;
     }
-
-    .policy-link:visited {
-      color: purple;
-    }
-
+    .policy-link:visited { color: purple; }
     @media (max-width: 768px) {
-      .form-box {
-        padding: 20px;
-      }
+      .form-box { padding: 20px; }
     }
   </style>
 </head>
@@ -151,6 +127,27 @@
   <script>
     let otpCode = "";
     let otpVerified = false;
+    let lineName = "";
+    let lineId = "";
+
+    const scriptURL = "https://script.google.com/macros/s/AKfycbwrLhSa3j719FAmWIcMvnFc7oDhZj51HNmpysP-BLW_rlKbA_lGulsGH6E9nIMXKRok4w/exec";
+
+    window.onload = function () {
+      liff.init({ liffId: "2007370960-q6NQvyQN" })
+        .then(() => {
+          if (!liff.isLoggedIn()) {
+            liff.login();
+          } else {
+            liff.getProfile().then(profile => {
+              lineName = profile.displayName;
+              lineId = profile.userId;
+            });
+          }
+        })
+        .catch(err => {
+          console.error("LIFF init error", err);
+        });
+    };
 
     function sendOTP() {
       const phone = document.getElementById("phone").value;
@@ -180,7 +177,7 @@
 
     function loadVendors() {
       const phone = document.getElementById("phone").value;
-      fetch(`https://script.google.com/macros/s/YOUR_SCRIPT_ID/exec?phone=${phone}`)
+      fetch(`${scriptURL}?phone=${phone}`)
         .then(response => response.json())
         .then(data => {
           const select = document.getElementById("vendor");
@@ -212,37 +209,39 @@
       if (!name || !lastname || !email || !phone || !vendor) {
         return alert("กรุณากรอกข้อมูลให้ครบทุกช่อง");
       }
-
       if (!validateEmail(email)) {
         return alert("รูปแบบอีเมลไม่ถูกต้อง");
       }
-
       if (!validatePhone(phone)) {
         return alert("กรุณากรอกเบอร์โทรให้ถูกต้อง (ตัวเลข 9-10 หลัก)");
       }
-
       if (!otpVerified) {
         return alert("กรุณายืนยัน OTP ก่อนลงทะเบียน");
       }
-
       if (!consent) {
         return alert("กรุณายินยอมตามนโยบายก่อนลงทะเบียน");
       }
 
-      const data = { name, lastname, email, phone, vendor };
+      const data = {
+        name, lastname, email, phone, vendor, lineName, lineId
+      };
 
-      fetch("https://script.google.com/macros/s/YOUR_SCRIPT_ID/exec", {
+      fetch(scriptURL, {
         method: "POST",
-        body: JSON.stringify(data),
+        body: JSON.stringify(data)
       })
-        .then(res => res.json())
-        .then(resp => {
-          alert("ลงทะเบียนสำเร็จ!");
+      .then(res => res.json())
+      .then(resp => {
+        alert("ลงทะเบียนสำเร็จ!");
+        if (liff.isInClient()) {
+          liff.closeWindow();
+        } else {
           window.close();
-        })
-        .catch(err => {
-          alert("เกิดข้อผิดพลาด: " + err);
-        });
+        }
+      })
+      .catch(err => {
+        alert("เกิดข้อผิดพลาด: " + err);
+      });
     }
 
     function validateEmail(email) {
