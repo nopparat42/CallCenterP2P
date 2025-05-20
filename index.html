@@ -184,8 +184,8 @@
           select.innerHTML = '<option value="">-- เลือก Vendor --</option>';
           data.vendors.forEach(v => {
             const option = document.createElement("option");
-            option.value = v;
-            option.text = v;
+            option.value = v.VendorCode;
+            option.text = v.VendorName;
             select.appendChild(option);
           });
         });
@@ -205,6 +205,7 @@
     function registerUser() {
       const name = document.getElementById("name").value.trim();
       const lastname = document.getElementById("lastname").value.trim();
+      const vendorCode = document.getElementById("vendor").value;
       const email = document.getElementById("email").value.trim();
       const phone = document.getElementById("phone").value.trim();
       const vendor = document.getElementById("vendor").value;
@@ -226,13 +227,14 @@
         return alert("กรุณายินยอมตามนโยบายก่อนลงทะเบียน");
       }
     
-      const consentText = "ฉันยินยอมตามนโยบายการประมวลผลข้อมูลส่วนบุคคล (PDPA)";
+      const consentText = "ฉันยินยอมตามนโยบายการประมวลผลข้อมูลส่วนบุคคล (PDPA) ให้บริษัทฯ ใช้ข้อมูล เช่น ชื่อ ที่อยู่ เอกสาร และข้อมูลอื่นๆ เพื่อประมวลผลด้วยระบบ AI (OCR และ Automation) เพื่อเพิ่มประสิทธิภาพในการให้บริการ โดยข้อมูลจะถูกเก็บรักษาตามกฎหมาย PDPA\n\n";
       const now = new Date();
       const offsetMs = 7 * 60 * 60 * 1000;
       const localDateTime = new Date(now.getTime() + offsetMs).toISOString().replace('Z', '+07:00');
     
       const bodyData = {
         LineID: lineId,
+        VendorCode: vendorCode,
         Name: name,
         LastName: lastname,
         Email: email,
