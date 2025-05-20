@@ -195,7 +195,11 @@
       const confirmed = confirm(
         "บริษัทฯ ขอความยินยอมในการใช้ข้อมูลของคุณ เช่น ชื่อ ที่อยู่ เอกสาร และข้อมูลอื่นๆ เพื่อประมวลผลด้วยระบบ AI (OCR และ Automation) เพื่อเพิ่มประสิทธิภาพในการให้บริการ โดยข้อมูลจะถูกเก็บรักษาตามกฎหมาย PDPA\n\nคุณยินยอมให้เราใช้ข้อมูลของคุณตามวัตถุประสงค์ดังกล่าวหรือไม่?"
       );
-      document.getElementById("consent").checked = confirmed;
+      if (confirmed) {
+        document.getElementById("consent").checked = true;
+      } else {
+        document.getElementById("consent").checked = false;
+      }
     }
 
     function registerUser() {
