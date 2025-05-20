@@ -209,7 +209,7 @@
       const phone = document.getElementById("phone").value.trim();
       const vendor = document.getElementById("vendor").value;
       const consent = document.getElementById("consent").checked;
-
+    
       if (!name || !lastname || !email || !phone || !vendor) {
         return alert("กรุณากรอกข้อมูลให้ครบทุกช่อง");
       }
@@ -225,26 +225,45 @@
       if (!consent) {
         return alert("กรุณายินยอมตามนโยบายก่อนลงทะเบียน");
       }
-
-      const data = {
-        name, lastname, email, phone, vendor, lineName, lineId
+    
+      const consentText = "ฉันยินยอมตามนโยบายการประมวลผลข้อมูลส่วนบุคคล (PDPA)";
+      const now = new Date();
+      const offsetMs = 7 * 60 * 60 * 1000;
+      const localDateTime = new Date(now.getTime() + offsetMs).toISOString().replace('Z', '+07:00');
+    
+      const bodyData = {
+        LineID: lineId,
+        Name: name,
+        LastName: lastname,
+        Email: email,
+        Phone: phone,
+        Consent: consentText,
+        TimeStamp: localDateTime
       };
-
-      fetch(scriptURL, {
+    
+      const webhookURL = "https://prod-52.southeastasia.logic.azure.com:443/workflows/c330992d6c98407d978a97b10ac9cd63/triggers/manual/paths/invoke?api-version=2016-06-01&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=hed-NGOJnAFSwwisX3FW2WaN7WRJnOrnoTZ3u-kNDLc";
+    
+      fetch(webhookURL, {
         method: "POST",
-        body: JSON.stringify(data)
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(bodyData)
       })
-      .then(res => res.json())
-      .then(resp => {
-        alert("ลงทะเบียนสำเร็จ!");
-        if (liff.isInClient()) {
-          liff.closeWindow();
+      .then(res => {
+        if (res.status === 201) {
+          alert("ลงทะเบียนสำเร็จ!");
+          if (liff.isInClient()) {
+            liff.closeWindow();
+          } else {
+            window.close();
+          }
         } else {
-          window.close();
+          return res.text().then(msg => {
+            alert("ลงทะเบียนไม่สำเร็จ: " + msg);
+          });
         }
       })
       .catch(err => {
-        alert("เกิดข้อผิดพลาด: " + err);
+        alert("เกิดข้อผิดพลาด: " + err.message);
       });
     }
 
