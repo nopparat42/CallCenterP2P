@@ -21,15 +21,16 @@
     #040e1a 100%       /* น้ำเงินเกือบดำ ท้ายสุด */
   );
       color: #333;
-      zoom: 1.4;
+      zoom: 1.5;
     }
+    .hidden { display: none !important; }
     .container {
       width: 100%;
       padding: 20px;
     }
     .form-box {
       width: 100%;
-      max-width: 600px;
+      max-width: 550px;
       background: #fff;
       margin: 0 auto;
       padding: 30px 40px;
@@ -87,7 +88,7 @@
       cursor: pointer;
     }
     .policy-link:visited { color: purple; }
-    @media (max-width: 768px) {
+    @media (max-width: 1000px) {
       .form-box { padding: 20px; }
     }
   </style>
@@ -96,42 +97,57 @@
   <div class="container">
     <div class="form-box">
       <h2>Register Form</h2>
+      
+      <label>เลขประจำตัวผู้เสียภาษี 13 หลัก ที่ลงทะเบียนกับบริษัท :</label>
+      <input type="text" id="taxid">
+      <div style="display: flex; align-items: center;">
+        <button onclick="checkTaxid();">ตรวจสอบข้อมูล</button>
+        <span id="otp-status"></span>
+      </div>
+      
+      <div id="after-tax-form" class="hidden">
+      <br>
+      <label>ชื่อผู้ขายจากระบบ:</label>
+      <input disabled type="text" id="vendorName">
 
-      <label>ชื่อ (Name):</label>
+      <label>อีเมลจากระบบ:</label>
+      <input disabled type="email" id="email">
+
+      <label>ชื่อ:</label>
       <input type="text" id="name">
 
-      <label>นามสกุล (Lastname):</label>
+      <label>นามสกุล:</label>
       <input type="text" id="lastname">
-
-      <label>อีเมล:</label>
-      <input type="email" id="email">
 
       <label>เบอร์โทร:</label>
       <input type="text" id="phone">
-      <div style="display: flex; align-items: center;">
+      <!-- <div style="display: flex; align-items: center;">
         <button onclick="sendOTP()">Send OTP</button>
         <span id="otp-status"></span>
-      </div>
+      </div> -->
 
-      <div class="otp-section" id="otp-section">
+      <!-- <div class="otp-section" id="otp-section">
         <label>OTP:</label>
         <input type="text" id="otp">
         <button onclick="verifyOTP()">Verify OTP</button>
-      </div>
+      </div> -->
 
-      <div style="margin-top: 25px;">
-        <label>Vendor:</label>
+      <!-- <div style="margin-top: 10px;">
+        <label>รหัสผู้ขาย :</label>
         <select id="vendor">
-          <option value="">-- เลือก Vendor --</option>
+          <option value="">-- เลือกรหัส --</option>
         </select>
-      </div>
+      </div> -->
 
       <div class="checkbox-row">
         <input type="checkbox" id="consent">
         <label for="consent">ฉันยินยอมตาม <a class="policy-link" onclick="showConsent()">นโยบาย</a></label>
       </div>
 
-      <button onclick="registerUser()">Register</button>
+      <button onclick="registerUser()">ลงทะเบียน</button>
+          <br>
+           <br>
+      </div>
     </div>
   </div>
 
@@ -143,22 +159,26 @@
 
     const scriptURL = "https://script.google.com/macros/s/AKfycbwrLhSa3j719FAmWIcMvnFc7oDhZj51HNmpysP-BLW_rlKbA_lGulsGH6E9nIMXKRok4w/exec";
 
-    window.onload = function () {
-      liff.init({ liffId: "2007370960-q6NQvyQN" })
-        .then(() => {
-          if (!liff.isLoggedIn()) {
-            liff.login();
-          } else {
-            liff.getProfile().then(profile => {
-              lineName = profile.displayName;
-              lineId = profile.userId;
-            });
-          }
-        })
-        .catch(err => {
-          console.error("LIFF init error", err);
-        });
-    };
+    // window.onload = function () {
+    //   liff.init({ liffId: "2007370960-q6NQvyQN" })
+    //     .then(() => {
+    //       if (!liff.isLoggedIn()) {
+    //         liff.login();
+    //       } else {
+    //         liff.getProfile().then(profile => {
+    //           lineName = profile.displayName;
+    //           lineId = profile.userId;
+    //         });
+    //       }
+    //     })
+    //     .catch(err => {
+    //       console.error("LIFF init error", err);
+    //     });
+    // };
+
+    function showFormFields() {
+      document.getElementById("after-tax-form").classList.remove("hidden");
+    }
 
     function sendOTP() {
       const phone = document.getElementById("phone").value;
@@ -213,16 +233,68 @@
       }
     }
 
+    function checkTaxid() {
+      document.getElementById("vendorName").value = "";
+      document.getElementById("email").value = "";
+      const taxid = document.getElementById("taxid").value.trim();
+      if (!taxid) {
+        return alert("กรุณากรอกเลขประจำตัวผู้เสียภาษี 13 หลัก");
+      }
+
+      if (!validateTaxID(taxid)) {
+        return alert("กรุณากรอกเลขประจำตัวผู้เสียภาษี 13 หลักให้ถูกต้อง");
+      }
+
+      fetch("https://prod-94.southeastasia.logic.azure.com:443/workflows/905097db4a3940cab29a01926b28ccf0/triggers/manual/paths/invoke?api-version=2016-06-01&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=D4GtAut2OTMv0oOyHe7tVnH1ukKllJJ7L6k5ywks1JM", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ taxid: taxid })
+      })
+        .then(response => {
+            if (response.status === 200) {
+              return response.json();
+            } else if (response.status === 404) {
+              // กรณีไม่พบข้อมูล
+              alert("ไม่พบข้อมูลสำหรับเลขประจำตัวผู้เสียภาษีนี้");
+              document.getElementById("after-tax-form").classList.add("hidden");
+              return;
+             } else {
+              // กรณีไม่ได้ status 200
+              alert("เกิดข้อผิดพลาด: รหัส " + response.status);
+              document.getElementById("after-tax-form").classList.add("hidden");
+              return;
+            }
+          })
+        .then(data => {
+          if (!data) return;
+          if (data.error) {
+            alert(data.error);
+            document.getElementById("after-tax-form").classList.add("hidden");
+            return;
+          }
+          document.getElementById("vendorName").value = data[0].VendorName || "";
+          document.getElementById("email").value = data[0].Email || "";
+          showFormFields();
+        })
+        .catch(err => {
+          console.error("Error fetching email:", err);
+          alert("เกิดข้อผิดพลาดในการตรวจสอบข้อมูล");
+          document.getElementById("after-tax-form").classList.add("hidden");
+        });
+    }
+
     function registerUser() {
+      const taxid = document.getElementById("taxid").value.trim();
       const name = document.getElementById("name").value.trim();
       const lastname = document.getElementById("lastname").value.trim();
-      const vendorCode = document.getElementById("vendor").value;
       const email = document.getElementById("email").value.trim();
       const phone = document.getElementById("phone").value.trim();
-      const vendor = document.getElementById("vendor").value;
+      const vendorName = document.getElementById("vendorName").value;
       const consent = document.getElementById("consent").checked;
     
-      if (!name || !lastname || !email || !phone || !vendor) {
+      if (!name || !lastname || !email || !phone || !vendorName || !taxid) {
         return alert("กรุณากรอกข้อมูลให้ครบทุกช่อง");
       }
       if (!validateEmail(email)) {
@@ -231,9 +303,12 @@
       if (!validatePhone(phone)) {
         return alert("กรุณากรอกเบอร์โทรให้ถูกต้อง (ตัวเลข 9-10 หลัก)");
       }
-      if (!otpVerified) {
-        return alert("กรุณายืนยัน OTP ก่อนลงทะเบียน");
+      if (!validateTaxID(taxid)) {
+        return alert("กรุณากรอกเลขประจำตัวผู้เสียภาษี 13 หลักให้ถูกต้อง");
       }
+      // if (!otpVerified) {
+      //   return alert("กรุณายืนยัน OTP ก่อนลงทะเบียน");
+      // }
       if (!consent) {
         return alert("กรุณายินยอมตามนโยบายก่อนลงทะเบียน");
       }
@@ -245,7 +320,7 @@
     
       const bodyData = {
         LineID: lineId,
-        VendorCode: vendorCode,
+        VendorCode: vendorName,
         Name: name,
         LastName: lastname,
         Email: email,
@@ -263,7 +338,7 @@
       })
       .then(res => {
         if (res.status === 201) {
-          alert("ลงทะเบียนสำเร็จ!");
+          alert("ระบบทำการส่ง Email สำหรับการยืนยันตัวตน โปรดยืนยันตัวตนผ่าน Email ก่อนการใช้งาน");
           if (liff.isInClient()) {
             liff.closeWindow();
           } else {
@@ -288,6 +363,11 @@
     function validatePhone(phone) {
       const re = /^[0-9]{9,10}$/;
       return re.test(phone);
+    }
+
+    function validateTaxID(taxid) {
+      const re = /^[0-9]{13}$/;
+      return re.test(taxid);
     }
   </script>
 </body>
