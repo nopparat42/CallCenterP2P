@@ -156,6 +156,7 @@
     let otpVerified = false;
     let lineName = "";
     let lineId = "";
+    let cvcodeList = [];
 
     const scriptURL = "https://script.google.com/macros/s/AKfycbwrLhSa3j719FAmWIcMvnFc7oDhZj51HNmpysP-BLW_rlKbA_lGulsGH6E9nIMXKRok4w/exec";
 
@@ -274,6 +275,10 @@
             document.getElementById("after-tax-form").classList.add("hidden");
             return;
           }
+          cvcodeList = data.map(item => ({
+                VendorCode: item.VendorCode,
+                Branch: item.Branch
+            }));
           document.getElementById("vendorName").value = data[0].VendorName || "";
           document.getElementById("email").value = data[0].Email || "";
           showFormFields();
@@ -320,7 +325,9 @@
     
       const bodyData = {
         LineID: lineId,
-        VendorCode: vendorName,
+        ListData: cvcodeList,
+        VendorName: vendorName,
+        TaxID: taxid,
         Name: name,
         LastName: lastname,
         Email: email,
