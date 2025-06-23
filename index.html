@@ -160,22 +160,22 @@
 
     const scriptURL = "https://script.google.com/macros/s/AKfycbwrLhSa3j719FAmWIcMvnFc7oDhZj51HNmpysP-BLW_rlKbA_lGulsGH6E9nIMXKRok4w/exec";
 
-    // window.onload = function () {
-    //   liff.init({ liffId: "2007370960-q6NQvyQN" })
-    //     .then(() => {
-    //       if (!liff.isLoggedIn()) {
-    //         liff.login();
-    //       } else {
-    //         liff.getProfile().then(profile => {
-    //           lineName = profile.displayName;
-    //           lineId = profile.userId;
-    //         });
-    //       }
-    //     })
-    //     .catch(err => {
-    //       console.error("LIFF init error", err);
-    //     });
-    // };
+    window.onload = function () {
+      liff.init({ liffId: "2007370960-q6NQvyQN" })
+        .then(() => {
+          if (!liff.isLoggedIn()) {
+            liff.login();
+          } else {
+            liff.getProfile().then(profile => {
+              lineName = profile.displayName;
+              lineId = profile.userId;
+            });
+          }
+        })
+        .catch(err => {
+          console.error("LIFF init error", err);
+        });
+    };
 
     function showFormFields() {
       document.getElementById("after-tax-form").classList.remove("hidden");
