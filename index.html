@@ -1,381 +1,418 @@
 <!DOCTYPE html>
 <html lang="th">
 <head>
-  <meta charset="UTF-8">
-  <title>Register Page</title>
-  <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
-  <style>
-    * { box-sizing: border-box; }
-    body {
-      min-height: 100vh;
-      height: 100%;
-      margin: 0;
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        background: radial-gradient(
-    circle at 72% 2%,
-    #1a9a5b 0%,
-    #29b980 12%,       /* เขียวช่วงต้นเท่านั้น */
-    #1976d2 35%,       /* น้ำเงินเริ่มแทรกเร็วขึ้น */
-    #0c356a 65%,       /* น้ำเงินเข้ม */
-    #091c3a 85%,       /* น้ำเงินเข้มมาก */
-    #040e1a 100%       /* น้ำเงินเกือบดำ ท้ายสุด */
-  );
-      color: #333;
-      zoom: 1.5;
-    }
-    .hidden { display: none !important; }
-    .container {
-      width: 100%;
-      padding: 20px;
-    }
-    .form-box {
-      width: 100%;
-      max-width: 550px;
-      background: #fff;
-      margin: 0 auto;
-      padding: 30px 40px;
-      border-radius: 10px;
-      box-shadow: 0 8px 16px rgba(0, 0, 0, 0.08);
-    }
-    h2 { text-align: center; color: #005b9f; }
-    label {
-      display: block;
-      margin-bottom: 6px;
-      font-weight: 600;
-      color: #333;
-    }
-    input[type="text"],
-    input[type="password"],
-    input[type="email"],
-    select {
-      width: 100%;
-      padding: 12px;
-      margin-bottom: 18px;
-      border-radius: 6px;
-      border: 1px solid #ccc;
-      font-size: 16px;
-    }
-    button {
-      background-color: #005b9f;
-      color: white;
-      border: none;
-      padding: 12px 20px;
-      font-size: 16px;
-      border-radius: 6px;
-      cursor: pointer;
-    }
-    button:hover { background-color: #004480; }
-    .otp-section {
-      display: none;
-      margin-top: 10px;
-    }
-    .otp-verified {
-      font-weight: bold;
-      color: green;
-      margin-left: 10px;
-    }
-    .checkbox-row {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      margin-bottom: 25px;
-      justify-content: flex-start;
-      flex-wrap: wrap;
-    }
-    .policy-link {
-      color: #007bff;
-      text-decoration: underline;
-      cursor: pointer;
-    }
-    .policy-link:visited { color: purple; }
-    @media (max-width: 1000px) {
-      .form-box { padding: 20px; }
-    }
-  </style>
+    <base target="_top">
+    <meta charset="UTF-8">
+    <title>รายละเอียดบิลค้างชำระ</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- เพิ่ม LIFF SDK ตรงนี้ -->
+    <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
+    <style>
+        body {background: #fff;font-family: Arial,sans-serif;color: #222;margin: 0;padding: 0;}
+        h1 { color: #0073ea;text-align: center;font-weight: bold;letter-spacing: 1px;margin: 32px 0 18px 0;font-size: 2em;}
+        .main-container { max-width: 900px; background: #fff; margin: auto;}
+        .form-top-row { display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 16px; margin-bottom: 16px; font-size: 1.1em;}
+        .form-top-row label { margin-right: 3px; font-weight: 500; }
+        .form-top-row select, .form-top-row input[type="date"] {min-width: 110px;padding: 9px 12px;border-radius:8px; border:1px solid #bbb; outline:none; font-size:1em;}
+        .dates-row { display: flex; justify-content: center; align-items: center; gap: 9px; margin-bottom: 18px;}
+        .dates-row label { font-weight: 500; }
+        .status-row {display: flex; justify-content: center; align-items: center; margin-bottom: 10px;}
+        .status-row label {margin-right:6px; font-weight:500;}
+        .status-row select {padding: 7px 14px; border-radius: 7px; border: 1px solid #bbb; font-size:1em; min-width:120px;}
+        .det-row {text-align:center; margin:10px 0 14px 0;font-size:1.13em;font-weight:500;}
+        .det-row strong {font-size:1.17em;color:#222;letter-spacing:1px;}
+        .table-wrap {overflow-x:auto; margin-bottom:20px;}
+        .custom-table {width:100%; border-collapse:collapse; box-shadow:0 2px 8px #eee; font-size: 1em; min-width: 690px;}
+        .custom-table th {background:#0086ff;color:#fff;font-weight:bold;text-align:center;padding:12px 4px;border-bottom:3px solid #fff;}
+        .custom-table td {text-align:center;padding:10px 4px;border-bottom:1px solid #e5e5e5;}
+        .custom-table td input[type="checkbox"] {transform:scale(1.1);}
+        .custom-table tr:last-child td {border-bottom:none;}
+        .total-row {background:#eaf5ff;font-weight:bold;}
+        .total-row td {font-size:1.2em;padding:15px 8px;text-align:right;}
+        .total-label {text-align:left !important;}
+        .centered-btn {width:97%;margin:auto;display:flex;justify-content:center;align-items:center;margin-bottom:24px;}
+        .btn-gen {padding:13px 32px;background:#0073ea;color:#fff;border:none;border-radius:8px;font-size:1.1em;cursor:pointer;margin:14px 8px;font-weight:500;}
+        .btn-gen:hover {background:#005dc0;}
+        .img-area {display:flex;flex-direction:column;align-items:center;gap:40px;margin-top:15px;margin-bottom:35px;}
+        .qr-img {margin-bottom:40px;}
+        .barcode-img {margin-top:22px;margin-bottom:10px;}
+        /* Responsive */
+        @media (max-width: 640px) {
+            .main-container {max-width: 100vw; padding: 0 2vw;}
+            .form-top-row, .dates-row, .status-row {font-size: 0.99em; gap: 5px;}
+            h1 { font-size: 1.18em;}
+            .det-row { font-size: 0.99em;}
+            .custom-table, .custom-table th, .custom-table td {font-size:0.91em;min-width:85px;}
+        }
+    </style>
 </head>
 <body>
-  <div class="container">
-    <div class="form-box">
-      <h2>Register Form</h2>
-      
-      <label>เลขประจำตัวผู้เสียภาษี 13 หลัก ที่ลงทะเบียนกับบริษัท :</label>
-      <input type="text" id="taxid">
-      <div style="display: flex; align-items: center;">
-        <button onclick="checkTaxid();">ตรวจสอบข้อมูล</button>
-        <span id="otp-status"></span>
-      </div>
-      
-      <div id="after-tax-form" class="hidden">
-      <br>
-      <label>ชื่อผู้ขายจากระบบ:</label>
-      <input disabled type="text" id="vendorName">
+<div class="main-container">
+    <h1>WEB APP</h1>
+    <div class="form-top-row">
+        <label for="company">บริษัท:</label>
+        <select id="company"></select>
+        <label for="cv">CV:</label>
+        <select id="cv"></select>
+        <!-- <label for="account">ชื่อบัญชี:</label>
+        <select id="account"></select> -->
+        <label>ชื่อบัญชี:</label>
+        <span id="account-label" style="font-weight:bold;padding-left:10px"></span>
 
-      <label>อีเมลจากระบบ:</label>
-      <input disabled type="email" id="email">
-
-      <label>ชื่อ:</label>
-      <input type="text" id="name">
-
-      <label>นามสกุล:</label>
-      <input type="text" id="lastname">
-
-      <label>เบอร์โทร:</label>
-      <input type="text" id="phone">
-      <!-- <div style="display: flex; align-items: center;">
-        <button onclick="sendOTP()">Send OTP</button>
-        <span id="otp-status"></span>
-      </div> -->
-
-      <!-- <div class="otp-section" id="otp-section">
-        <label>OTP:</label>
-        <input type="text" id="otp">
-        <button onclick="verifyOTP()">Verify OTP</button>
-      </div> -->
-
-      <!-- <div style="margin-top: 10px;">
-        <label>รหัสผู้ขาย :</label>
-        <select id="vendor">
-          <option value="">-- เลือกรหัส --</option>
-        </select>
-      </div> -->
-
-      <div class="checkbox-row">
-        <input type="checkbox" id="consent">
-        <label for="consent">ฉันยินยอมตาม <a class="policy-link" onclick="showConsent()">นโยบาย</a></label>
-      </div>
-
-      <button onclick="registerUser()">ลงทะเบียน</button>
-          <br>
-           <br>
-      </div>
+        <div class="dates-row">
+            <label for="start-date">วันที่เริ่ม:</label>
+            <input type="date" id="start-date">
+            <label for="end-date">ถึง</label>
+            <input type="date" id="end-date">
+        </div>
     </div>
-  </div>
+    <div class="status-row">
+        <label for="duedate-status">สถานะวันครบกำหนด:</label>
+        <select id="duedate-status">
+            <option value="all">ทั้งหมด</option>
+            <option value="in">ภายในกำหนด</option>
+            <option value="over">เกินกำหนด</option>
+        </select>
+    </div>
+    <div class="det-row" id="bill-detail">
+        รายละเอียดบิล : วันที่ <strong id="current-date"></strong>
+    </div>
+    <div class="table-wrap">
+        <table class="custom-table" id="inv-table">
+            <thead>
+            <tr>
+                <th><input type="checkbox" id="check-all"></th>
+                <th>วันที่</th>
+                <th>ประเภทเอกสาร</th>
+                <th>เลขที่บิล</th>
+                <th>วันครบกำหนด</th>
+                <th>จำนวนเงิน</th>
+            </tr>
+            </thead>
+            <tbody id="tb-body"></tbody>
+            <tfoot>
+            <tr class="total-row">
+                <td colspan="5" class="total-label">รวม:</td>
+                <td id="total-amount">0</td>
+            </tr>
+            </tfoot>
+        </table>
+    </div>
+    <div class="centered-btn">
+        <button class="btn-gen" id="gen-btn">Generate เพื่อชำระเงิน</button>
+    </div>
+    <div class="img-area">
+        <div id="qr-area" class="qr-img"></div>
+        <div id="barcode-area" class="barcode-img"></div>
+    </div>
+</div>
+<script>
+    let allInvoicesData;
 
-  <script>
-    let otpCode = "";
-    let otpVerified = false;
-    let lineName = "";
-    let lineId = "";
-    let cvcodeList = [];
+    function populateDropdown(list, elementId) {
+        const el = document.getElementById(elementId);
+        if (!el) return;
+        let uniqueList = Array.from(new Set(list));
+        el.innerHTML = uniqueList.filter(x => x && x.trim() !== '').map(x => `<option value="${x}">${x}</option>`).join('');
+        if (el.options.length > 0) el.value = el.options[0].value;
+    }
 
-    const scriptURL = "https://script.google.com/macros/s/AKfycbwrLhSa3j719FAmWIcMvnFc7oDhZj51HNmpysP-BLW_rlKbA_lGulsGH6E9nIMXKRok4w/exec";
+    function formatDate(dstr) {
+        let d = new Date(dstr);
+        if (isNaN(d.getTime())) return dstr;
+        return (d.getDate() + "/" + (d.getMonth()+1) + "/" + d.getFullYear());
+    }
 
-    window.onload = function () {
-      liff.init({ liffId: "2007370960-q6NQvyQN" })
-        .then(() => {
-          if (!liff.isLoggedIn()) {
-            liff.login();
-          } else {
-            liff.getProfile().then(profile => {
-              lineName = profile.displayName;
-              lineId = profile.userId;
-            });
-          }
-        })
-        .catch(err => {
-          console.error("LIFF init error", err);
+    function todayStr() {
+        let t = new Date();
+        return t.toISOString().substr(0,10);
+    }
+
+    function displayCurrentDate() {
+        let t = new Date();
+        const el = document.getElementById("current-date");
+        if (el) el.innerText = `${t.getDate()}/${t.getMonth()+1}/${t.getFullYear()}`;
+    }
+
+    function updateAccountDropdown() {
+    const company = document.getElementById('company').value;
+    const cv = document.getElementById('cv').value;
+    // const filteredAccounts = allInvoicesData.names.filter(acc => 
+    const invoice = allInvoicesData.invoices.find(inv =>
+        inv.company == company && inv.cv == cv
+    );
+
+    let accountName = '-';
+    if (invoice && invoice.name) accountName = invoice.name;
+
+    document.getElementById('account-label').innerText = accountName;
+    renderTable();
+}
+
+    function renderTable() {
+        let tbody = document.getElementById("tb-body");
+        if (!tbody || !allInvoicesData || !allInvoicesData.invoices || allInvoicesData.invoices.length === 0) {
+            if (tbody) tbody.innerHTML = "<tr><td colspan='6'>ไม่มีข้อมูลที่ตรงกับเงื่อนไข</td></tr>";
+            return;
+        }
+
+        let start = document.getElementById('start-date').value;
+        let end = document.getElementById('end-date').value;
+        let status = document.getElementById('duedate-status').value;
+        let companyValue = document.getElementById('company').value;
+        let cvValue = document.getElementById('cv').value;
+        let accountValue = document.getElementById('account-label').innerText.trim();
+        if (accountValue === '-' || !accountValue) accountValue = '';  // ถ้าไม่มีชื่อบัญชี
+
+        let filtered = allInvoicesData.invoices.filter(inv=>{
+            let dateOk = true, statusOk = true, companyOk = true, cvOk = true, accountOk = true;
+
+            if (start) dateOk = inv.date && (inv.date >= start);
+            if (end)   dateOk = dateOk && inv.date && (inv.date <= end);
+            
+            let today = new Date();
+            today.setHours(0,0,0,0);
+            let invDue = inv.due ? new Date(inv.due) : null;
+            
+            if (status==="in") {
+                statusOk = invDue && (invDue >= today);
+            } else if (status==="over") {
+                statusOk = invDue && (invDue < today);
+            }
+            
+            if (companyValue) companyOk = (inv.company == companyValue);
+            if (cvValue) cvOk = (inv.cv == cvValue);
+            if (accountValue) accountOk = (inv.name == accountValue);
+            
+            return dateOk && statusOk && companyOk && cvOk && accountOk;
         });
+
+        let html = "";
+        filtered.forEach(inv => {
+            html += `<tr>
+                <td><input type="checkbox" class="check-item"></td>
+                <td>${formatDate(inv.date)}</td>
+                <td>${inv.docType}</td>
+                <td>${inv.number}</td>
+                <td>${formatDate(inv.due)}</td>
+                <td>${inv.amount.toLocaleString()}</td>
+            </tr>`;
+        });
+        
+        tbody.innerHTML = html;
+        bindCheckboxListeners();
+        calculateTotal();
+    }
+
+    function bindCheckboxListeners() {
+        var items = document.querySelectorAll('.check-item');
+        if (items.length === 0) return;
+        for(let i=0;i<items.length;i++){
+            items[i].addEventListener('change', calculateTotal);
+            items[i].checked = false;
+        }
+        document.getElementById('check-all').checked = false;
+        document.getElementById('check-all').addEventListener('change',function(){
+            var state = this.checked;
+            items.forEach(cb=>cb.checked=state);
+            calculateTotal();
+        });
+    }
+
+    function calculateTotal() {
+        var items = document.querySelectorAll('.check-item');
+        var total = 0;
+        items.forEach(function(cb) {
+            if(cb.checked){
+                var row = cb.closest('tr');
+                if (row && row.cells && row.cells.length > 5) {
+                    var amtStr = row.cells[5].innerText.replace(/,/g,"");
+                    var amt = parseFloat(amtStr);
+                    if (!isNaN(amt)) {
+                        total += amt;
+                    }
+                }
+            }
+        });
+        document.getElementById('total-amount').innerText = total.toLocaleString();
+    }
+
+    // function generateQRBarcode() {
+        // let ref = document.getElementById('cv').value;
+        // let company = document.getElementById('company').value;
+        // let barcodeData = "CV:" + ref + "|COMP:" + company;
+        // let qrUrl = "https://api.qrserver.com/v1/create-qr-code/?data=" + encodeURIComponent(barcodeData) + "&size=150x150";
+        // document.getElementById('qr-area').innerHTML = '<img src="'+qrUrl+'" alt="QR" width="150" height="150">';
+        // let barcodeImgUrl = "https://barcode.tec-it.com/barcode.ashx?data=" + encodeURIComponent(barcodeData) + "&code=Code128&dpi=96&dataseparator=%7C";
+        // document.getElementById('barcode-area').innerHTML = '<img src="'+barcodeImgUrl+'" alt="Barcode" style="height:65px;">';
+    // }
+
+    function initializeData(data) {
+        try {
+            allInvoicesData = data;
+            
+            populateDropdown(allInvoicesData.companies, 'company');
+            populateDropdown(allInvoicesData.cvs, 'cv');
+            // populateDropdown(allInvoicesData.names, 'account');
+
+            // Account dropdown จะ populate เมื่อมีการเลือก company, cv
+            updateAccountDropdown();
+
+            let minDate = allInvoicesData.invoices.filter(inv=>inv.date && inv.date!="1970-01-01").reduce(
+                (min,inv)=>inv.date<min?inv.date:min,
+                allInvoicesData.invoices.find(i=>i.date && i.date!="1970-01-01")?.date || todayStr()
+            );
+            let maxDate = allInvoicesData.invoices.filter(inv=>inv.date && inv.date!="1970-01-01").reduce(
+                (max,inv)=>inv.date>max?inv.date:max,
+                allInvoicesData.invoices.find(i=>i.date && i.date!="1970-01-01")?.date || todayStr()
+            );
+            
+            const startDateEl = document.getElementById('start-date');
+            if (startDateEl) startDateEl.value = minDate;
+            const endDateEl = document.getElementById('end-date');
+            if (endDateEl) endDateEl.value = maxDate;
+
+            if (startDateEl) startDateEl.addEventListener('change', renderTable);
+            if (endDateEl) endDateEl.addEventListener('change', renderTable);
+            const duedateStatusEl = document.getElementById('duedate-status');
+            if (duedateStatusEl) duedateStatusEl.addEventListener('change', renderTable);
+            const genBtnEl = document.getElementById('gen-btn');
+            // if (genBtnEl) genBtnEl.addEventListener('click', generateQRBarcode);
+            const companyEl = document.getElementById('company');
+            if (companyEl) companyEl.addEventListener('change', updateAccountDropdown);
+            const cvEl = document.getElementById('cv');
+            if (cvEl) cvEl.addEventListener('change', updateAccountDropdown);
+            const accountEl = document.getElementById('account');
+            if (accountEl) accountEl.addEventListener('change', renderTable);
+
+            displayCurrentDate();
+            renderTable();
+
+        } catch (e) {
+            console.error("Error initializing data:", e);
+            document.body.innerHTML = "<h1>เกิดข้อผิดพลาดในการโหลดข้อมูล</h1><p>ไม่สามารถโหลดข้อมูลจาก Google Sheet ได้</p>";
+        }
+    }
+
+   let lineId = "";
+   let lineName = "";
+
+   window.onload = function() {
+      
+      liff.init({ liffId: "2008016148-J6xE72LD" })
+    .then(() => {
+      if (!liff.isLoggedIn()) {
+        liff.login();
+      } else {
+        liff.getProfile().then(profile => {
+          // lineName = profile.displayName;
+          lineId = profile.userId;
+          document.getElementById('cv').value = profile.userId;
+        });
+      }
+    })
+    .catch(err => {
+      console.error("LIFF init error", err);
+    });
+    // google.script.run.withSuccessHandler(initializeData).getData(lineId);
+    }
+
+    function getSelectedQRData() {
+    const company = document.getElementById('company').value;
+    const cv = document.getElementById('cv').value;
+    const name = document.getElementById('account-label').innerText;
+    const amount = document.getElementById('total-amount').innerText.replace(/,/g, '');
+
+    const data = {
+        company: company,
+        cv: cv,
+        name: name,
+        amount: amount
     };
 
-    function showFormFields() {
-      document.getElementById("after-tax-form").classList.remove("hidden");
-    }
+    console.log(data);
+    return data;
+}
 
-    function sendOTP() {
-      const phone = document.getElementById("phone").value;
-      if (!validatePhone(phone)) {
-        return alert("กรุณากรอกเบอร์โทรให้ถูกต้อง (ตัวเลข 9-10 หลัก)");
-      }
+// document.getElementById('gen-btn').addEventListener('click', function() {
+//   const qrdata = getSelectedQRData();
+//   google.script.run
+//     .withSuccessHandler(function(result) {
+//       // แสดง QR Image
+//       document.getElementById('qr-area').innerHTML =
+//         '<img src="' + result.imgUrl + '" width="200">';
+//       // log และแสดง string QR สำหรับ debug (console หรือแสดงบนหน้าเว็บก็ได้)
+//       console.log('QR String:', result.qrString);
 
-      otpCode = Math.floor(100000 + Math.random() * 900000).toString();
-      alert("OTP ของคุณคือ: " + otpCode);
-      document.getElementById("otp-section").style.display = "block";
-      document.getElementById("otp-status").innerHTML = "";
-      otpVerified = false;
-    }
+//       // แนะนำ: เพิ่มแสดง string ที่หน้าเว็บ (ชั่วคราวสำหรับ debug)
+//       document.getElementById('qr-area').innerHTML +=
+//         '<div style="font-size:0.9em;word-break:break-all;margin-top:10px;color:#555;">' +
+//         result.qrString +
+//         '</div>';
+//     })
+//     .generatePromptPayQR(qrdata);
 
-    function verifyOTP() {
-      const inputOtp = document.getElementById("otp").value;
-      if (inputOtp === otpCode) {
-        alert("ยืนยัน OTP สำเร็จ");
-        otpVerified = true;
-        document.getElementById("otp-section").style.display = "none";
-        document.getElementById("otp-status").innerHTML = "<span class='otp-verified'>✓ ยืนยันแล้ว</span>";
-        loadVendors();
-      } else {
-        alert("OTP ไม่ถูกต้อง");
-      }
-    }
+// document.getElementById('gen-btn').addEventListener('click', function() {
+//   const qrdata = getSelectedQRData();
 
-    function loadVendors() {
-      const phone = document.getElementById("phone").value;
-      fetch(`${scriptURL}?phone=${phone}`)
-        .then(response => response.json())
-        .then(data => {
-          const select = document.getElementById("vendor");
-          select.innerHTML = '<option value="">-- เลือก Vendor --</option>';
-          data.vendors.forEach(v => {
-            const option = document.createElement("option");
-            option.value = v.VendorCode;
-            option.text = v.VendorName;
-            select.appendChild(option);
-          });
-        });
-    }
+//   google.script.run.withSuccessHandler(function(result) {
+//     // เตรียมตัวแปรที่จะเอาไปแสดง
+//     const companyName = result.companyName || '-';
+//     const accountName = qrdata.name || '-';
+//     const amount      = Number(qrdata.amount).toLocaleString(); // ใส่ comma ใหม่
 
-    function showConsent() {
-      const confirmed = confirm(
-        "บริษัทฯ ขอความยินยอมในการใช้ข้อมูลของคุณ เช่น ชื่อ ที่อยู่ เอกสาร และข้อมูลอื่นๆ เพื่อประมวลผลด้วยระบบ AI (OCR และ Automation) เพื่อเพิ่มประสิทธิภาพในการให้บริการ โดยข้อมูลจะถูกเก็บรักษาตามกฎหมาย PDPA\n\nคุณยินยอมให้เราใช้ข้อมูลของคุณตามวัตถุประสงค์ดังกล่าวหรือไม่?"
-      );
-      if (confirmed) {
-        document.getElementById("consent").checked = false;
-      } else {
-        document.getElementById("consent").checked = true;
-      }
-    }
+//     // HTML รูปแบบใหม่
+//     document.getElementById('qr-area').innerHTML = 
+//       '<div style="text-align:center;font-weight:bold; color:#0073ea; margin-bottom:3px;">'
+//       + companyName + '<br>' + accountName +
+//       '</div>' +
+//       '<img src="' + result.imgUrl + '" width="120" height="120" style="display:block;margin:auto;">' +
+//       '<div style="text-align:center; font-weight:bold; color:#222; margin-top:3px;">' + amount + ' บาท</div>';
 
-    function checkTaxid() {
-      document.getElementById("vendorName").value = "";
-      document.getElementById("email").value = "";
-      const taxid = document.getElementById("taxid").value.trim();
-      if (!taxid) {
-        return alert("กรุณากรอกเลขประจำตัวผู้เสียภาษี 13 หลัก");
-      }
+//     // (Optional: log qr string สำหรับ debug)
+//     // console.log(result.qrString);
+//   })
+//   .generatePromptPayQR(qrdata);
+// });
+document.getElementById('gen-btn').addEventListener('click', function() {
+  const qrdata = getSelectedQRData();
 
-      if (!validateTaxID(taxid)) {
-        return alert("กรุณากรอกเลขประจำตัวผู้เสียภาษี 13 หลักให้ถูกต้อง");
-      }
+  // เรียกฝั่ง QR
+  google.script.run.withSuccessHandler(function(qrResult) {
+    // แสดง QR
+    const companyName = qrResult.companyName || '-';
+    const accountName = qrdata.name || '-';
+    const amount      = Number(qrdata.amount).toLocaleString();
 
-      fetch("https://prod-94.southeastasia.logic.azure.com:443/workflows/905097db4a3940cab29a01926b28ccf0/triggers/manual/paths/invoke?api-version=2016-06-01&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=D4GtAut2OTMv0oOyHe7tVnH1ukKllJJ7L6k5ywks1JM", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify({ taxid: taxid })
-      })
-        .then(response => {
-            if (response.status === 200) {
-              return response.json();
-            } else if (response.status === 404) {
-              // กรณีไม่พบข้อมูล
-              alert("ไม่พบข้อมูลสำหรับเลขประจำตัวผู้เสียภาษีนี้");
-              document.getElementById("after-tax-form").classList.add("hidden");
-              return;
-             } else {
-              // กรณีไม่ได้ status 200
-              alert("เกิดข้อผิดพลาด: รหัส " + response.status);
-              document.getElementById("after-tax-form").classList.add("hidden");
-              return;
-            }
-          })
-        .then(data => {
-          if (!data) return;
-          if (data.error) {
-            alert(data.error);
-            document.getElementById("after-tax-form").classList.add("hidden");
-            return;
-          }
-          cvcodeList = data.map(item => ({
-                VendorCode: item.VendorCode,
-                Branch: item.Branch
-            }));
-          document.getElementById("vendorName").value = data[0].VendorName || "";
-          document.getElementById("email").value = data[0].Email || "";
-          showFormFields();
-        })
-        .catch(err => {
-          console.error("Error fetching email:", err);
-          alert("เกิดข้อผิดพลาดในการตรวจสอบข้อมูล");
-          document.getElementById("after-tax-form").classList.add("hidden");
-        });
-    }
+    document.getElementById('qr-area').innerHTML = 
+      '<div style="text-align:center;font-weight:bold; color:#0073ea; margin-bottom:3px;">'
+      + companyName + '<br>' + accountName +
+      '</div>' +
+      '<img src="' + qrResult.imgUrl + '" width="120" height="120" style="display:block;margin:auto;">' +
+      '<div style="text-align:center; font-weight:bold; color:#222; margin-top:3px;">จำนวนเงิน ' + amount + ' บาท</div>';
+  }).generatePromptPayQR(qrdata);
 
-    function registerUser() {
-      const taxid = document.getElementById("taxid").value.trim();
-      const name = document.getElementById("name").value.trim();
-      const lastname = document.getElementById("lastname").value.trim();
-      const email = document.getElementById("email").value.trim();
-      const phone = document.getElementById("phone").value.trim();
-      const vendorName = document.getElementById("vendorName").value;
-      const consent = document.getElementById("consent").checked;
-    
-      if (!name || !lastname || !email || !phone || !vendorName || !taxid) {
-        return alert("กรุณากรอกข้อมูลให้ครบทุกช่อง");
-      }
-      if (!validateEmail(email)) {
-        return alert("รูปแบบอีเมลไม่ถูกต้อง");
-      }
-      if (!validatePhone(phone)) {
-        return alert("กรุณากรอกเบอร์โทรให้ถูกต้อง (ตัวเลข 9-10 หลัก)");
-      }
-      if (!validateTaxID(taxid)) {
-        return alert("กรุณากรอกเลขประจำตัวผู้เสียภาษี 13 หลักให้ถูกต้อง");
-      }
-      // if (!otpVerified) {
-      //   return alert("กรุณายืนยัน OTP ก่อนลงทะเบียน");
-      // }
-      if (!consent) {
-        return alert("กรุณายินยอมตามนโยบายก่อนลงทะเบียน");
-      }
-    
-      const consentText = "ฉันยินยอมตามนโยบายการประมวลผลข้อมูลส่วนบุคคล (PDPA) ให้บริษัทฯ ใช้ข้อมูล เช่น ชื่อ ที่อยู่ เอกสาร และข้อมูลอื่นๆ เพื่อประมวลผลด้วยระบบ AI (OCR และ Automation) เพื่อเพิ่มประสิทธิภาพในการให้บริการ โดยข้อมูลจะถูกเก็บรักษาตามกฎหมาย PDPA\n\n";
-      const now = new Date();
-      const offsetMs = 7 * 60 * 60 * 1000;
-      const localDateTime = new Date(now.getTime() + offsetMs).toISOString().replace('Z', '+07:00');
-    
-      const bodyData = {
-        LineID: lineId,
-        ListData: cvcodeList,
-        VendorName: vendorName,
-        TaxID: taxid,
-        Name: name,
-        LastName: lastname,
-        Email: email,
-        Phone: phone,
-        Consent: consentText,
-        TimeStamp: localDateTime
-      };
-    
-      const webhookURL = "https://prod-52.southeastasia.logic.azure.com:443/workflows/c330992d6c98407d978a97b10ac9cd63/triggers/manual/paths/invoke?api-version=2016-06-01&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=hed-NGOJnAFSwwisX3FW2WaN7WRJnOrnoTZ3u-kNDLc";
-    
-      fetch(webhookURL, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(bodyData)
-      })
-      .then(res => {
-        if (res.status === 201) {
-          alert("ระบบทำการส่ง Email สำหรับการยืนยันตัวตน โปรดยืนยันตัวตนผ่าน Email ก่อนการใช้งาน");
-          if (liff.isInClient()) {
-            liff.closeWindow();
-          } else {
-            window.close();
-          }
-        } else {
-          return res.text().then(msg => {
-            alert("ลงทะเบียนไม่สำเร็จ: " + msg);
-          });
-        }
-      })
-      .catch(err => {
-        alert("เกิดข้อผิดพลาด: " + err.message);
-      });
-    }
-
-    function validateEmail(email) {
-      const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-      return re.test(email);
-    }
-
-    function validatePhone(phone) {
-      const re = /^[0-9]{9,10}$/;
-      return re.test(phone);
-    }
-
-    function validateTaxID(taxid) {
-      const re = /^[0-9]{13}$/;
-      return re.test(taxid);
-    }
-  </script>
+  // เรียกฝั่ง Barcode
+  google.script.run.withSuccessHandler(function(result) {
+    document.getElementById('barcode-area').innerHTML =
+      '<div style="text-align:center;font-weight:600;color:#0073ea;margin-bottom:2px; margin-top:-16px;">' +
+      'Barcode สำหรับชำระเงิน' +
+      '</div>' +
+      '<img src="' + result.barcodeImgUrl + '" alt="barcode" style="display:block;margin:auto;">' +
+      '<div style="text-align:center;color:#666;font-size:0.8em;margin-top:2px;">' +
+      result.barcodeString.replace(/\r/g, '<span style="color:red;font-weight:bold">⏎</span>') +
+      '</div>';
+  }).generateBarcodeData(qrdata);
+}); 
+</script>
 </body>
 </html>
+
+<!-- document.getElementById('barcode-area').innerHTML =
+  '<div style="text-align:center;font-weight:600;color:#0073ea;margin-bottom:2px; margin-top:-16px;">' +
+  'Barcode สำหรับชำระเงิน' + '</div>' +
+  // ปรับ scale (ขนาด) และ height เช่น scale=1.2 height=10
+  //'<img src="' + result.barcodeImgUrl.replace('scale=3', 'scale=1.2').replace('height=16','height=10') + '" alt="barcode" style="display:block;margin:auto;">' +
+  '<div style="text-align:center;color:#666;font-size:0.8em;margin-top:2px;">' +
+  result.barcodeString.replace(/\r/g, '<span style="color:red;font-weight:bold">⏎</span>') +
+  '</div>'; -->
