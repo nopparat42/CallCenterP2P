@@ -247,59 +247,59 @@
         // document.getElementById('barcode-area').innerHTML = '<img src="'+barcodeImgUrl+'" alt="Barcode" style="height:65px;">';
     // }
 
-    // function initializeData(data) {
-    //     try {
-    //         allInvoicesData = data;
+    function initializeData(data) {
+        try {
+            allInvoicesData = data;
             
-    //         populateDropdown(allInvoicesData.companies, 'company');
-    //         populateDropdown(allInvoicesData.cvs, 'cv');
-    //         // populateDropdown(allInvoicesData.names, 'account');
+            populateDropdown(allInvoicesData.companies, 'company');
+            populateDropdown(allInvoicesData.cvs, 'cv');
+            // populateDropdown(allInvoicesData.names, 'account');
 
-    //         // Account dropdown จะ populate เมื่อมีการเลือก company, cv
-    //         updateAccountDropdown();
+            // Account dropdown จะ populate เมื่อมีการเลือก company, cv
+            updateAccountDropdown();
 
-    //         let minDate = allInvoicesData.invoices.filter(inv=>inv.date && inv.date!="1970-01-01").reduce(
-    //             (min,inv)=>inv.date<min?inv.date:min,
-    //             allInvoicesData.invoices.find(i=>i.date && i.date!="1970-01-01")?.date || todayStr()
-    //         );
-    //         let maxDate = allInvoicesData.invoices.filter(inv=>inv.date && inv.date!="1970-01-01").reduce(
-    //             (max,inv)=>inv.date>max?inv.date:max,
-    //             allInvoicesData.invoices.find(i=>i.date && i.date!="1970-01-01")?.date || todayStr()
-    //         );
+            let minDate = allInvoicesData.invoices.filter(inv=>inv.date && inv.date!="1970-01-01").reduce(
+                (min,inv)=>inv.date<min?inv.date:min,
+                allInvoicesData.invoices.find(i=>i.date && i.date!="1970-01-01")?.date || todayStr()
+            );
+            let maxDate = allInvoicesData.invoices.filter(inv=>inv.date && inv.date!="1970-01-01").reduce(
+                (max,inv)=>inv.date>max?inv.date:max,
+                allInvoicesData.invoices.find(i=>i.date && i.date!="1970-01-01")?.date || todayStr()
+            );
             
-    //         const startDateEl = document.getElementById('start-date');
-    //         if (startDateEl) startDateEl.value = minDate;
-    //         const endDateEl = document.getElementById('end-date');
-    //         if (endDateEl) endDateEl.value = maxDate;
+            const startDateEl = document.getElementById('start-date');
+            if (startDateEl) startDateEl.value = minDate;
+            const endDateEl = document.getElementById('end-date');
+            if (endDateEl) endDateEl.value = maxDate;
 
-    //         if (startDateEl) startDateEl.addEventListener('change', renderTable);
-    //         if (endDateEl) endDateEl.addEventListener('change', renderTable);
-    //         const duedateStatusEl = document.getElementById('duedate-status');
-    //         if (duedateStatusEl) duedateStatusEl.addEventListener('change', renderTable);
-    //         const genBtnEl = document.getElementById('gen-btn');
-    //         // if (genBtnEl) genBtnEl.addEventListener('click', generateQRBarcode);
-    //         const companyEl = document.getElementById('company');
-    //         if (companyEl) companyEl.addEventListener('change', updateAccountDropdown);
-    //         const cvEl = document.getElementById('cv');
-    //         if (cvEl) cvEl.addEventListener('change', updateAccountDropdown);
-    //         const accountEl = document.getElementById('account');
-    //         if (accountEl) accountEl.addEventListener('change', renderTable);
+            if (startDateEl) startDateEl.addEventListener('change', renderTable);
+            if (endDateEl) endDateEl.addEventListener('change', renderTable);
+            const duedateStatusEl = document.getElementById('duedate-status');
+            if (duedateStatusEl) duedateStatusEl.addEventListener('change', renderTable);
+            const genBtnEl = document.getElementById('gen-btn');
+            // if (genBtnEl) genBtnEl.addEventListener('click', generateQRBarcode);
+            const companyEl = document.getElementById('company');
+            if (companyEl) companyEl.addEventListener('change', updateAccountDropdown);
+            const cvEl = document.getElementById('cv');
+            if (cvEl) cvEl.addEventListener('change', updateAccountDropdown);
+            const accountEl = document.getElementById('account');
+            if (accountEl) accountEl.addEventListener('change', renderTable);
 
-    //         displayCurrentDate();
-    //         renderTable();
+            displayCurrentDate();
+            renderTable();
 
-    //     } catch (e) {
-    //         console.error("Error initializing data:", e);
-    //         document.body.innerHTML = "<h1>เกิดข้อผิดพลาดในการโหลดข้อมูล</h1><p>ไม่สามารถโหลดข้อมูลจาก Google Sheet ได้</p>";
-    //     }
-    // }
+        } catch (e) {
+            console.error("Error initializing data:", e);
+            document.body.innerHTML = "<h1>เกิดข้อผิดพลาดในการโหลดข้อมูล</h1><p>ไม่สามารถโหลดข้อมูลจาก Google Sheet ได้</p>";
+        }
+    }
 
    let lineId = "";
    let lineName = "";
 
    window.onload = function() {
       
-      liff.init({ liffId: "2008016148-J6xE72LD" })
+      liff.init({ liffId: "2007370960-q6NQvyQN" })
     .then(() => {
       if (!liff.isLoggedIn()) {
         liff.login();
@@ -374,36 +374,36 @@
 //   })
 //   .generatePromptPayQR(qrdata);
 // });
-// document.getElementById('gen-btn').addEventListener('click', function() {
-//   const qrdata = getSelectedQRData();
+document.getElementById('gen-btn').addEventListener('click', function() {
+  const qrdata = getSelectedQRData();
 
-//   // เรียกฝั่ง QR
-//   google.script.run.withSuccessHandler(function(qrResult) {
-//     // แสดง QR
-//     const companyName = qrResult.companyName || '-';
-//     const accountName = qrdata.name || '-';
-//     const amount      = Number(qrdata.amount).toLocaleString();
+  // เรียกฝั่ง QR
+  google.script.run.withSuccessHandler(function(qrResult) {
+    // แสดง QR
+    const companyName = qrResult.companyName || '-';
+    const accountName = qrdata.name || '-';
+    const amount      = Number(qrdata.amount).toLocaleString();
 
-//     document.getElementById('qr-area').innerHTML = 
-//       '<div style="text-align:center;font-weight:bold; color:#0073ea; margin-bottom:3px;">'
-//       + companyName + '<br>' + accountName +
-//       '</div>' +
-//       '<img src="' + qrResult.imgUrl + '" width="120" height="120" style="display:block;margin:auto;">' +
-//       '<div style="text-align:center; font-weight:bold; color:#222; margin-top:3px;">จำนวนเงิน ' + amount + ' บาท</div>';
-//   }).generatePromptPayQR(qrdata);
+    document.getElementById('qr-area').innerHTML = 
+      '<div style="text-align:center;font-weight:bold; color:#0073ea; margin-bottom:3px;">'
+      + companyName + '<br>' + accountName +
+      '</div>' +
+      '<img src="' + qrResult.imgUrl + '" width="120" height="120" style="display:block;margin:auto;">' +
+      '<div style="text-align:center; font-weight:bold; color:#222; margin-top:3px;">จำนวนเงิน ' + amount + ' บาท</div>';
+  }).generatePromptPayQR(qrdata);
 
-//   // เรียกฝั่ง Barcode
-//   google.script.run.withSuccessHandler(function(result) {
-//     document.getElementById('barcode-area').innerHTML =
-//       '<div style="text-align:center;font-weight:600;color:#0073ea;margin-bottom:2px; margin-top:-16px;">' +
-//       'Barcode สำหรับชำระเงิน' +
-//       '</div>' +
-//       '<img src="' + result.barcodeImgUrl + '" alt="barcode" style="display:block;margin:auto;">' +
-//       '<div style="text-align:center;color:#666;font-size:0.8em;margin-top:2px;">' +
-//       result.barcodeString.replace(/\r/g, '<span style="color:red;font-weight:bold">⏎</span>') +
-//       '</div>';
-//   }).generateBarcodeData(qrdata);
-// }); 
+  // เรียกฝั่ง Barcode
+  google.script.run.withSuccessHandler(function(result) {
+    document.getElementById('barcode-area').innerHTML =
+      '<div style="text-align:center;font-weight:600;color:#0073ea;margin-bottom:2px; margin-top:-16px;">' +
+      'Barcode สำหรับชำระเงิน' +
+      '</div>' +
+      '<img src="' + result.barcodeImgUrl + '" alt="barcode" style="display:block;margin:auto;">' +
+      '<div style="text-align:center;color:#666;font-size:0.8em;margin-top:2px;">' +
+      result.barcodeString.replace(/\r/g, '<span style="color:red;font-weight:bold">⏎</span>') +
+      '</div>';
+  }).generateBarcodeData(qrdata);
+}); 
 </script>
 </body>
 </html>
